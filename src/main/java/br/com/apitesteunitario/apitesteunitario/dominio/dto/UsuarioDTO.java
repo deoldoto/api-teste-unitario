@@ -14,6 +14,5 @@ public class UsuarioDTO {
     private Integer id;
     private String nome;
     private String email;
-    @JsonIgnore
     private String senha;
 }
