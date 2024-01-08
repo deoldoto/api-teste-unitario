@@ -4,6 +4,7 @@ import br.com.apitesteunitario.apitesteunitario.dominio.Usuario;
 import br.com.apitesteunitario.apitesteunitario.dominio.dto.UsuarioDTO;
 import br.com.apitesteunitario.apitesteunitario.repositories.UsuarioRespositorio;
 import br.com.apitesteunitario.apitesteunitario.service.UsuarioService;
+import br.com.apitesteunitario.apitesteunitario.service.exceptions.DataIntegratyViolationException;
 import br.com.apitesteunitario.apitesteunitario.service.exceptions.ObjectNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario cadastrar(UsuarioDTO usuarioDTO) {
+        procurarPorEmail(usuarioDTO);
         return usuarioRespositorio.save(mapper.map(usuarioDTO, Usuario.class));
+    }
+
+    private void procurarPorEmail(UsuarioDTO usuarioDTO){
+        Optional<Usuario> usuario = usuarioRespositorio.findByEmail(usuarioDTO.getEmail());
+        if(usuario.isPresent()){
+            throw new DataIntegratyViolationException("E-Mail já cadastrado no sistema.");
+        }
     }
 }
