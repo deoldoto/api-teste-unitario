@@ -10,4 +10,6 @@ public interface UsuarioService {
     Usuario procurarPorID(Integer id);
     List<Usuario> listarTodos();
     Usuario cadastrar(UsuarioDTO usuarioDTO);
+    Usuario alterar(UsuarioDTO usuarioDTO);
+    void excluir(Integer id);
 }
