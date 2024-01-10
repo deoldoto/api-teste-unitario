@@ -4,11 +4,11 @@ import br.com.apitesteunitario.apitesteunitario.config.ModelMapperConfig;
 import br.com.apitesteunitario.apitesteunitario.dominio.Usuario;
 import br.com.apitesteunitario.apitesteunitario.dominio.dto.UsuarioDTO;
 import br.com.apitesteunitario.apitesteunitario.repositories.UsuarioRespositorio;
+import br.com.apitesteunitario.apitesteunitario.service.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -55,7 +55,17 @@ class UsuarioServiceImplTest {
         assertEquals(NOME,retorno.getNome());
         assertEquals(EMAIL,retorno.getEmail());
     }
+    @Test
+    void wenFindByIdThenReturnAnObjectNotFoundException(){
+        when(repositorio.findById(anyInt())).thenThrow(new ObjectNotFoundException("Objeto não encontrado"));
 
+        try{
+            service.procurarPorID(1);
+        } catch(Exception e){
+            assertEquals(ObjectNotFoundException.class, e.getClass());
+            assertEquals("Objeto não encontrado", e.getMessage());
+        }
+    }
     @Test
     void listarTodos() {
     }
