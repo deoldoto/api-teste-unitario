@@ -10,11 +10,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -25,12 +28,13 @@ class UsuarioServiceImplTest {
     public static final String NOME = "Tiago";
     public static final String EMAIL = "deoldoto@gmail.com";
     public static final String SENHA = "123";
+    public static final int INDEX = 0;
     @InjectMocks
     private UsuarioServiceImpl service;
     @Mock
     private UsuarioRespositorio repositorio;
     @Mock
-    private ModelMapperConfig mapper;
+    private ModelMapper mapper;
 
     private Usuario usuario;
     private UsuarioDTO usuarioDTO;
@@ -56,7 +60,7 @@ class UsuarioServiceImplTest {
         assertEquals(EMAIL,retorno.getEmail());
     }
     @Test
-    void wenFindByIdThenReturnAnObjectNotFoundException(){
+    void whenFindByIdThenReturnAnObjectNotFoundException(){
         when(repositorio.findById(anyInt())).thenThrow(new ObjectNotFoundException("Objeto não encontrado"));
 
         try{
@@ -67,11 +71,33 @@ class UsuarioServiceImplTest {
         }
     }
     @Test
-    void listarTodos() {
+    void listarTodosTest() {
+        when(repositorio.findAll()).thenReturn(List.of(usuario));
+        List<Usuario> retorno = repositorio.findAll();
+
+        assertNotNull(retorno);
+        assertEquals(1,retorno.size());
+        assertEquals(Usuario.class, retorno.get(INDEX).getClass());
+
+        assertEquals(ID, retorno.get(INDEX).getId());
+        assertEquals(NOME, retorno.get(INDEX).getNome());
+        assertEquals(EMAIL, retorno.get(INDEX).getEmail());
+        assertEquals(SENHA, retorno.get(INDEX).getSenha());
     }
 
     @Test
-    void cadastrar() {
+    void cadastrarComSucesso() {
+        when(repositorio.save(any())).thenReturn(usuario);
+        Usuario retorno = service.cadastrar(usuarioDTO);
+
+        assertNotNull(retorno);
+        assertEquals(Usuario.class, retorno.getClass());
+        assertEquals(ID, retorno.getId());
+        assertEquals(NOME, retorno.getNome());
+        assertEquals(EMAIL, retorno.getEmail());
+        assertEquals(SENHA, retorno.getSenha());
+
+
     }
 
     @Test
