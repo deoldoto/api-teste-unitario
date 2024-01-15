@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -89,6 +88,23 @@ class UsuarioServiceImplTest {
     void cadastrarComSucesso() {
         when(repositorio.save(any())).thenReturn(usuario);
         Usuario retorno = service.cadastrar(usuarioDTO);
+
+        assertNotNull(retorno);
+        assertEquals(Usuario.class, retorno.getClass());
+        assertEquals(ID, retorno.getId());
+        assertEquals(NOME, retorno.getNome());
+        assertEquals(EMAIL, retorno.getEmail());
+        assertEquals(SENHA, retorno.getSenha());
+
+
+    } void cadastrarComFalhaDeIntegridadeDeDados() {
+        when(repositorio.findByEmail(anyString())).thenReturn(optionalUsuario);
+        try{
+            Usuario retorno = service.cadastrar(usuarioDTO);
+        }catch(Exception e){
+            assertEquals(Data);
+        }
+
 
         assertNotNull(retorno);
         assertEquals(Usuario.class, retorno.getClass());
