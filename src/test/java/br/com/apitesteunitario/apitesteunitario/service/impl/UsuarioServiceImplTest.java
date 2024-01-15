@@ -4,6 +4,7 @@ import br.com.apitesteunitario.apitesteunitario.config.ModelMapperConfig;
 import br.com.apitesteunitario.apitesteunitario.dominio.Usuario;
 import br.com.apitesteunitario.apitesteunitario.dominio.dto.UsuarioDTO;
 import br.com.apitesteunitario.apitesteunitario.repositories.UsuarioRespositorio;
+import br.com.apitesteunitario.apitesteunitario.service.exceptions.DataIntegratyViolationException;
 import br.com.apitesteunitario.apitesteunitario.service.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -97,23 +98,18 @@ class UsuarioServiceImplTest {
         assertEquals(SENHA, retorno.getSenha());
 
 
-    } void cadastrarComFalhaDeIntegridadeDeDados() {
+    }
+
+    @Test
+    void cadastrarComFalhaDeIntegridadeDeDados() {
         when(repositorio.findByEmail(anyString())).thenReturn(optionalUsuario);
         try{
-            Usuario retorno = service.cadastrar(usuarioDTO);
+            optionalUsuario.get().setId(2);
+            service.cadastrar(usuarioDTO);
         }catch(Exception e){
-            assertEquals(Data);
+            assertEquals(DataIntegratyViolationException.class, e.getClass());
+            assertEquals("E-Mail já cadastrado no sistema.", e.getMessage());
         }
-
-
-        assertNotNull(retorno);
-        assertEquals(Usuario.class, retorno.getClass());
-        assertEquals(ID, retorno.getId());
-        assertEquals(NOME, retorno.getNome());
-        assertEquals(EMAIL, retorno.getEmail());
-        assertEquals(SENHA, retorno.getSenha());
-
-
     }
 
     @Test
