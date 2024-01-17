@@ -113,7 +113,16 @@ class UsuarioServiceImplTest {
     }
 
     @Test
-    void alterar() {
+    void alterarComSucesso() {
+        when(repositorio.save(any())).thenReturn(usuario);
+        Usuario retorno = service.alterar(usuarioDTO);
+
+        assertNotNull(retorno);
+        assertEquals(Usuario.class, retorno.getClass());
+        assertEquals(ID, retorno.getId());
+        assertEquals(NOME, retorno.getNome());
+        assertEquals(EMAIL, retorno.getEmail());
+        assertEquals(SENHA, retorno.getSenha());
     }
 
     @Test
