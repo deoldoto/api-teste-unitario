@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -30,6 +31,7 @@ class UsuarioServiceImplTest {
     public static final String SENHA = "123";
     public static final int INDEX = 0;
     public static final String E_MAIL_JA_CADASTRADO_NO_SISTEMA = "E-Mail já cadastrado no sistema.";
+    public static final String OBJETO_NAO_ENCONTRADO = "Objeto não encontrado.";
     @InjectMocks
     private UsuarioServiceImpl service;
     @Mock
@@ -145,6 +147,16 @@ class UsuarioServiceImplTest {
         doNothing().when(repositorio).deleteById(anyInt());
         service.excluir(ID);
         verify(repositorio, times(1)).deleteById(anyInt());
+    }
+    @Test
+    void excluirComObjetoNaoEncontrado() {
+        when(repositorio.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO));
+        try{
+            service.excluir(ID);
+        }catch(Exception e){
+            assertEquals(ObjectNotFoundException.class, e.getClass());
+            assertEquals(OBJETO_NAO_ENCONTRADO, e.getMessage());
+        }
     }
 
     private void inicializaUsuario(){
