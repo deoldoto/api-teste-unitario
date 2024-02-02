@@ -3,6 +3,8 @@ package br.com.apitesteunitario.apitesteunitario.controller;
 import br.com.apitesteunitario.apitesteunitario.dominio.Usuario;
 import br.com.apitesteunitario.apitesteunitario.dominio.dto.UsuarioDTO;
 import br.com.apitesteunitario.apitesteunitario.service.impl.UsuarioServiceImpl;
+import org.apache.coyote.Response;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -10,10 +12,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class UsuarioControllerTest {
@@ -29,11 +34,12 @@ class UsuarioControllerTest {
     private UsuarioDTO usuarioDTO;
 
     @InjectMocks
-    private  UsuarioController controller;
+    private UsuarioController controller;
     @Mock
     private UsuarioServiceImpl usuarioService;
     @Mock
     private ModelMapper mapper;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -42,6 +48,20 @@ class UsuarioControllerTest {
 
     @Test
     void buscaPorId() {
+        when(usuarioService.procurarPorID(anyInt())).thenReturn(usuario);
+        when(mapper.map(any(), any())).thenReturn(usuarioDTO);
+
+        ResponseEntity<UsuarioDTO> response = controller.buscaPorId(ID);
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(UsuarioDTO.class, response.getBody().getClass());
+
+        assertEquals(ID, response.getBody().getId());
+        assertEquals(NOME, response.getBody().getNome());
+        assertEquals(EMAIL, response.getBody().getEmail());
+        assertEquals(SENHA, response.getBody().getSenha());
     }
 
     @Test
@@ -59,7 +79,8 @@ class UsuarioControllerTest {
     @Test
     void excluir() {
     }
-    private void inicializaUsuario(){
+
+    private void inicializaUsuario() {
         usuario = new Usuario(ID, NOME, EMAIL, SENHA);
         usuarioDTO = new UsuarioDTO(ID, NOME, EMAIL, SENHA);
     }
