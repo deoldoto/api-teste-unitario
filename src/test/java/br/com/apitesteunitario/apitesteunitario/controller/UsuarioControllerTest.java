@@ -92,6 +92,14 @@ class UsuarioControllerTest {
 
     @Test
     void incluir() {
+        when(usuarioService.cadastrar(any())).thenReturn(usuario);
+
+        ResponseEntity<UsuarioDTO> response = controller.incluir(usuarioDTO);
+
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getHeaders().get("Location"));
+
     }
 
     @Test
