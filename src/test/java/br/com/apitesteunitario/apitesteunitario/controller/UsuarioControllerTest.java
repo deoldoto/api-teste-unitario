@@ -12,7 +12,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -66,6 +70,24 @@ class UsuarioControllerTest {
 
     @Test
     void listarTodos() {
+        when(usuarioService.listarTodos()).thenReturn(List.of(usuario));
+        when(mapper.map(any(), any())).thenReturn(usuarioDTO);
+
+        ResponseEntity<List<UsuarioDTO>> response = controller.listarTodos();
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(ResponseEntity.class, response.getClass());
+//        assertEquals(ArrayList.class, response.getBody().getClass());
+        assertEquals(UsuarioDTO.class, response.getBody().get(INDEX).getClass());
+
+        assertEquals(ID, response.getBody().get(INDEX).getId());
+        assertEquals(NOME, response.getBody().get(INDEX).getNome());
+        assertEquals(EMAIL, response.getBody().get(INDEX).getEmail());
+        assertEquals(SENHA, response.getBody().get(INDEX).getSenha());
+
     }
 
     @Test
