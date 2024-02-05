@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class UsuarioControllerTest {
@@ -125,6 +125,18 @@ class UsuarioControllerTest {
 
     @Test
     void excluir() {
+        doNothing().when(usuarioService).excluir(anyInt());
+
+        ResponseEntity<UsuarioDTO> response = controller.excluir(ID);
+
+        assertNotNull(response);
+        assertEquals(ResponseEntity.class, response.getClass());
+        verify(usuarioService, times(1)).excluir(anyInt());
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+
+
+
     }
 
     private void inicializaUsuario() {
