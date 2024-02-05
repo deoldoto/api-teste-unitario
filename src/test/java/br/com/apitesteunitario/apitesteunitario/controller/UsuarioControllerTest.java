@@ -104,6 +104,23 @@ class UsuarioControllerTest {
 
     @Test
     void alterar() {
+        when(usuarioService.alterar(usuarioDTO)).thenReturn(usuario);
+        when(mapper.map(any(),any())).thenReturn(usuarioDTO);
+
+        ResponseEntity<UsuarioDTO> response =  controller.alterar(ID, usuarioDTO);
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(UsuarioDTO.class, response.getBody().getClass());
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        assertEquals(ID, response.getBody().getId());
+        assertEquals(NOME, response.getBody().getNome());
+        assertEquals(EMAIL, response.getBody().getEmail());
+
+
     }
 
     @Test
